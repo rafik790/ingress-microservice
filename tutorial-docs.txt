@@ -1,0 +1,46 @@
+https://www.youtube.com/watch?v=qHGKO69hMlw
+kubernetes.github.io/ingress-nginx/deploy
+https://github.com/shabbirdwd53/Kubernetes-Tutorial/blob/main/Ingress-Tutorial/ingress-scv.yml
+https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-helm/
+
+:::::::::::::Create AWS EKS:::::::::::
+1. To create a new cluster
+aws eks create-cluster --name dev-libanto --kubernetes-version 1.24 --role-arn arn:aws:iam::974747042145:role/customEksClusterRole --resources-vpc-config subnetIds=subnet-0bb5a0a1ab8b2c5af,subnet-079291fa509279d7b,subnet-0618472d9238e916b
+aws eks describe-cluster --name dev-libanto --query cluster.status
+aws eks describe-cluster --name dev-libanto
+aws eks describe-cluster --name dev-libanto --version
+aws eks delete-cluster --name dev-libanto
+aws eks list-clusters
+
+2. To create nodes group
+aws eks create-nodegroup --cluster-name dev-libanto --nodegroup-name cluster-node-grp --scaling-config minSize=2,maxSize=2,desiredSize=2 --disk-size 5 --subnets "subnet-0bb5a0a1ab8b2c5af" "subnet-079291fa509279d7b" "subnet-0618472d9238e916b" --instance-types "t2.small" --ami-type AL2_x86_64 --node-role arn:aws:iam::974747042145:role/customEKSWorkerRole
+aws eks describe-nodegroup --cluster-name dev-libanto --nodegroup-name cluster-node-grp
+aws eks describe-nodegroup --cluster-name dev-libanto --nodegroup-name cluster-node-grp --query nodegroup.status
+aws eks delete-nodegroup --cluster-name dev-libanto --nodegroup-name cluster-node-grp
+
+kubectl version --short --client
+
+3.FSPCreate or update the kubeconfig file for your cluster:
+aws eks --region ap-south-1 update-kubeconfig --name dev-libanto
+
+:::::::::Installl nginx controller using helm3::::::::::
+helm repo add nginx-stable https://helm.nginx.com/stable
+helm repo update
+helm evn => to know the local heml repo path
+
+helm install ingress-nginx nginx-stable/nginx-ingress
+helm uninstall ingress-nginx
+
+
+create certificate::
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/CN=*.lisansoft.online"
+openssl rsa -in key.pem -out key.pem
+
+docker login -u "rafik790" -p "10Rafkol@" docker.io
+
+mvn clean install -Dmaven.test.skip=true
+docker build . -t rafik790/libanto-purchases
+docker push rafik790/libanto-purchases
+
+docker build . -t rafik790/libanto-sales
+docker push rafik790/libanto-sales

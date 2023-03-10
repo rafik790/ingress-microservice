@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-ingress-libanto
+  namespace: default
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: sales.lisansoft.online
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: sales-service
+            port:
+              number: 8092
+  - host: purchases.lisansoft.online
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: purchases-service
+            port:
+              number: 8091

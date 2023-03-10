@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: purchases-deployment
+  namespace: default
+  labels:
+    app: purchases
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: purchases
+  template:
+    metadata:
+      labels:
+        app: purchases
+    spec:
+      containers:
+      - name: purchases
+        image: rafik790/libanto-purchases:latest
+        ports:
+        - containerPort: 8091
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: purchases-service
+  namespace: default
+spec:
+  selector:
+    app: purchases
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8091
+      targetPort: 8091
